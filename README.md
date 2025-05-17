@@ -28,7 +28,7 @@ go build -o bin/ -tags='netgo timetzdata' -trimpath -a -ldflags '-s -w'  ./cmd/t
 # Docker
 
 `troubleshootd` includes a `Dockerfile` which can be used for building and running
-vaultd within a docker container. The image can also be pulled from `ghcr.io/siafoundation/troubleshootd:latest`.
+troubleshootd within a docker container. The image can also be pulled from `ghcr.io/siafoundation/troubleshootd:latest`.
 
 ## Creating the container
 
@@ -36,7 +36,7 @@ Create a new file named `docker-compose.yml`. You can use the following as a tem
 
 ```yml
 services:
-  vaultd:
+  troubleshootd:
     image: ghcr.io/siafoundation/troubleshootd:latest
     ports:
       - 8080:8080/tcp
