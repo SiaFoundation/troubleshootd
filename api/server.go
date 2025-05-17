@@ -1,0 +1,56 @@
+package api
+
+import (
+	"context"
+	"net/http"
+	"runtime"
+
+	"go.sia.tech/host-troubleshoot/build"
+	"go.sia.tech/host-troubleshoot/troubleshoot"
+	"go.sia.tech/jape"
+)
+
+// A Troubleshooter is an interface that defines the methods for testing a host.
+type Troubleshooter interface {
+	TestHost(ctx context.Context, host troubleshoot.Host) (troubleshoot.Result, error)
+}
+
+type (
+	server struct {
+		t Troubleshooter
+	}
+)
+
+func (s *server) handleGETState(jc jape.Context) {
+	jc.Encode(StateResponse{
+		Version:   build.Version(),
+		Commit:    build.Commit(),
+		OS:        runtime.GOOS,
+		BuildTime: build.Time(),
+	})
+}
+
+func (s *server) handlePOSTTroubleshoot(jc jape.Context) {
+	var req troubleshoot.Host
+	if jc.Decode(&req) != nil {
+		return
+	}
+
+	resp, err := s.t.TestHost(jc.Request.Context(), req)
+	if err != nil {
+		jc.Error(err, http.StatusInternalServerError)
+		return
+	}
+	jc.Encode(resp)
+}
+
+// NewHandler returns a new HTTP handler for the API.
+func NewHandler(t Troubleshooter) http.Handler {
+	s := &server{
+		t: t,
+	}
+	return jape.Mux(map[string]jape.Handler{
+		"GET /state":         s.handleGETState,
+		"POST /troubleshoot": s.handlePOSTTroubleshoot,
+	})
+}

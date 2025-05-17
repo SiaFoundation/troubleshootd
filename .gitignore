@@ -1,0 +1,4 @@
+bin/
+vaultd.yml
+.DS_Store
+.vscode/
