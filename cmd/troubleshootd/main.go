@@ -46,8 +46,8 @@ func main() {
 	)
 
 	flag.StringVar(&httpAddr, "http.addr", ":8080", "HTTP address to listen on")
-	flag.StringVar(&exploredAPIAddress, "api.address", "https://api.siascan.com", "Explored API address")
-	flag.StringVar(&exploredAPIPassword, "api.password", "", "Explored API password")
+	flag.StringVar(&exploredAPIAddress, "explorer.address", "https://api.siascan.com", "Explored API address")
+	flag.StringVar(&exploredAPIPassword, "explorer.password", "", "Explored API password")
 	flag.TextVar(&logLevel, "log.level", zap.NewAtomicLevelAt(zapcore.InfoLevel), "Log level (debug, info, warn, error)")
 	flag.Parse()
 
