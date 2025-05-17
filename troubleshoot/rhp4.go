@@ -82,7 +82,6 @@ func testRHP4SiaMux(ctx context.Context, currentVersion SemVer, tip types.ChainI
 	res.Handshake = true
 
 	testRHP4Transport(ctx, t, currentVersion, tip, res)
-	return
 }
 
 func testRHP4Quic(ctx context.Context, currentVersion SemVer, tip types.ChainIndex, hostKey types.PublicKey, addr chain.NetAddress, res *RHP4Result) {
@@ -103,5 +102,4 @@ func testRHP4Quic(ctx context.Context, currentVersion SemVer, tip types.ChainInd
 	res.Handshake = true
 
 	testRHP4Transport(ctx, t, currentVersion, tip, res)
-	return
 }
