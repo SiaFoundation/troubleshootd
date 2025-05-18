@@ -1,4 +1,4 @@
-module go.sia.tech/host-troubleshoot
+module go.sia.tech/host-troubleshoot // v0.2.1
 
 go 1.24.2
 
