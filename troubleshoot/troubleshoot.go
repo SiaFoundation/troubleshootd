@@ -13,8 +13,6 @@ import (
 	proto4 "go.sia.tech/core/rhp/v4"
 	"go.sia.tech/core/types"
 	"go.sia.tech/coreutils/chain"
-	"go.sia.tech/coreutils/rhp/v4/quic"
-	"go.sia.tech/coreutils/rhp/v4/siamux"
 	"go.sia.tech/coreutils/threadgroup"
 	"go.sia.tech/host-troubleshoot/github"
 	"go.uber.org/zap"
@@ -42,6 +40,8 @@ type (
 
 		Scanned  bool          `json:"scanned"`
 		ScanTime time.Duration `json:"scanTime"`
+
+		ResolvedAddresses []string `json:"resolvedAddress"`
 
 		Settings *proto2.HostSettings `json:"settings"`
 
@@ -72,6 +72,9 @@ type (
 	// the results of the connection, handshake, and scan, as well as any errors
 	// or warnings that occurred during the test.
 	RHP4Result struct {
+		NetAddress        chain.NetAddress `json:"netAddress"`
+		ResolvedAddresses []string         `json:"resolvedAddress"`
+
 		Connected bool          `json:"connected"`
 		DialTime  time.Duration `json:"dialTime"`
 
@@ -81,8 +84,7 @@ type (
 		Scanned  bool          `json:"scanned"`
 		ScanTime time.Duration `json:"scanTime"`
 
-		NetAddress chain.NetAddress     `json:"netAddress"`
-		Settings   *proto4.HostSettings `json:"settings"`
+		Settings *proto4.HostSettings `json:"settings"`
 
 		Errors   []string `json:"errors"`
 		Warnings []string `json:"warnings"`
@@ -197,15 +199,7 @@ func (m *Manager) TestHost(ctx context.Context, host Host) (Result, error) {
 			log := log.With(zap.String("addr", addr.Address), zap.String("protocol", string(addr.Protocol)))
 			log.Debug("starting RHP4 test")
 			start := time.Now()
-			resp.RHP4[i].NetAddress = addr
-			switch addr.Protocol {
-			case siamux.Protocol:
-				testRHP4SiaMux(ctx, latestRelease, cs.Index, host.PublicKey, addr, &resp.RHP4[i])
-			case quic.Protocol:
-				testRHP4Quic(ctx, latestRelease, cs.Index, host.PublicKey, addr, &resp.RHP4[i])
-			default:
-				resp.RHP4[i].Errors = append(resp.RHP4[i].Errors, fmt.Sprintf("unknown protocol %q", addr.Protocol))
-			}
+			testRHP4(ctx, latestRelease, cs.Index, host.PublicKey, addr, &resp.RHP4[i])
 			log.Debug("finished RHP4 test", zap.Bool("successful", resp.RHP4[i].Scanned), zap.Duration("elapsed", time.Since(start)))
 			if resp.RHP4[i].Settings != nil {
 				// sticky version check

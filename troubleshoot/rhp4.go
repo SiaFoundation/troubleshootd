@@ -103,3 +103,33 @@ func testRHP4Quic(ctx context.Context, currentVersion SemVer, tip types.ChainInd
 
 	testRHP4Transport(ctx, t, currentVersion, tip, res)
 }
+
+func testRHP4(ctx context.Context, currentVersion SemVer, tip types.ChainIndex, hostKey types.PublicKey, netAddr chain.NetAddress, res *RHP4Result) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	res.NetAddress = netAddr
+	addr, _, err := net.SplitHostPort(netAddr.Address)
+	if err != nil {
+		res.Errors = append(res.Errors, fmt.Sprintf("failed to parse net address %q: %v", netAddr.Address, err))
+		return
+	}
+
+	ips, err := net.LookupIP(addr)
+	if err != nil {
+		res.Errors = append(res.Errors, fmt.Sprintf("failed to resolve host %q: %v", addr, err))
+		return
+	}
+	for _, ip := range ips {
+		res.ResolvedAddresses = append(res.ResolvedAddresses, ip.String())
+	}
+
+	switch netAddr.Protocol {
+	case siamux.Protocol:
+		testRHP4SiaMux(ctx, currentVersion, tip, hostKey, netAddr, res)
+	case quic.Protocol:
+		testRHP4Quic(ctx, currentVersion, tip, hostKey, netAddr, res)
+	default:
+		res.Errors = append(res.Errors, fmt.Sprintf("unknown protocol %q", netAddr.Protocol))
+	}
+}

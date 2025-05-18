@@ -47,6 +47,9 @@ func (v SemVer) Cmp(b SemVer) int {
 
 // UnmarshalText implements encoding.TextUnmarshaler
 func (v *SemVer) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return fmt.Errorf("empty version string")
+	}
 	version := string(buf)
 	if version[0] != 'v' {
 		return fmt.Errorf("invalid version format: %s", version)

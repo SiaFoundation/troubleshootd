@@ -37,6 +37,21 @@ func testRHP2(ctx context.Context, currentVersion SemVer, host Host, res *RHP2Re
 	res.DialTime = time.Since(start)
 	res.Connected = true
 
+	addr, _, err := net.SplitHostPort(host.RHP2NetAddress)
+	if err != nil {
+		res.Errors = append(res.Errors, fmt.Sprintf("failed to parse net address %q: %v", host.RHP2NetAddress, err))
+		return
+	}
+
+	ips, err := net.LookupIP(addr)
+	if err != nil {
+		res.Errors = append(res.Errors, fmt.Sprintf("failed to resolve host %q: %v", addr, err))
+		return
+	}
+	for _, ip := range ips {
+		res.ResolvedAddresses = append(res.ResolvedAddresses, ip.String())
+	}
+
 	start = time.Now()
 	t, err := proto2.NewRenterTransport(conn, host.PublicKey)
 	if err != nil {
