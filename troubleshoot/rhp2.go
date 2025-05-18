@@ -2,9 +2,12 @@ package troubleshoot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
+	"os"
 	"strings"
+	"syscall"
 	"time"
 
 	proto2 "go.sia.tech/core/rhp/v2"
@@ -26,11 +29,41 @@ func parseReleaseString(versionStr string) (SemVer, error) {
 	return version, nil
 }
 
+func dialContext(ctx context.Context, network, address string) (net.Conn, error) {
+	conn, err := (&net.Dialer{
+		Timeout: 5 * time.Second,
+	}).DialContext(ctx, network, address)
+	if err != nil {
+		// return more user-friendly errors if possible
+		var dnsErr *net.DNSError
+		if errors.As(err, &dnsErr) {
+			return nil, fmt.Errorf("failed to resolve host %q: check DNS setup", address)
+		}
+
+		var opErr *net.OpError
+		if errors.As(err, &opErr) {
+			if syscallErr, ok := opErr.Err.(*os.SyscallError); ok {
+				if syscallErr.Err == syscall.ECONNREFUSED {
+					return nil, fmt.Errorf("connection refused at %q: check if the service is running and port is forwarded", address)
+				}
+			}
+		}
+
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			return nil, fmt.Errorf("timeout connecting to %q: check port forwarding or firewall", address)
+		}
+
+		return nil, fmt.Errorf("failed to connect to host at %q: %w", address, err)
+	}
+	return conn, nil
+}
+
 func testRHP2(ctx context.Context, currentVersion SemVer, host Host, res *RHP2Result) {
 	start := time.Now()
-	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", host.RHP2NetAddress)
+	conn, err := dialContext(ctx, "tcp", host.RHP2NetAddress)
 	if err != nil {
-		res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to host: %v", err))
+		res.Errors = append(res.Errors, err.Error())
 		return
 	}
 	defer conn.Close()
@@ -107,9 +140,9 @@ func testRHP2(ctx context.Context, currentVersion SemVer, host Host, res *RHP2Re
 
 func testRHP3(ctx context.Context, rhp3Addr string, height uint64, host Host, res *RHP3Result) {
 	start := time.Now()
-	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", rhp3Addr)
+	conn, err := dialContext(ctx, "tcp", rhp3Addr)
 	if err != nil {
-		res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to host: %v", err))
+		res.Errors = append(res.Errors, err.Error())
 		return
 	}
 	defer conn.Close()

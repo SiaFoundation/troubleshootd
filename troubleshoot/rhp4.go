@@ -62,9 +62,9 @@ func testRHP4SiaMux(ctx context.Context, currentVersion SemVer, tip types.ChainI
 	defer cancel()
 
 	start := time.Now()
-	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", addr.Address)
+	conn, err := dialContext(ctx, "tcp", addr.Address)
 	if err != nil {
-		res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to host: %s", err))
+		res.Errors = append(res.Errors, err.Error())
 		return
 	}
 	defer conn.Close()
