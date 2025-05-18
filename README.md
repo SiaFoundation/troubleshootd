@@ -5,6 +5,31 @@ Provides an API that can be used to troubleshoot issues with a host's connectivi
 ### Default Ports
 + `8080` - API
 
+### Usage
+#### /state 
++ `GET`: Get troubleshootd status
+
+#### /troubleshoot
++ `POST`: Troubleshoot a host
++ Example JSON for /troubleshoot call
++ NOTE: RHP3 NetAddress is returned from RHP2 connection to host
+```
+{
+    "publicKey": "ed25519:hostPublicKey",
+    "rhp2NetAddress": "domain.tld:9982",
+    "rhp4NetAddresses": [
+        {
+            "address": "domain.tld:9984",
+            "protocol": "siamux"
+        },
+        {
+            "address": "domain.tld:9984",
+            "protocol": "quic"
+        }
+    ]
+}
+```
+
 ### CLI Flags
 
 ```
@@ -41,4 +66,6 @@ services:
     ports:
       - 8080:8080/tcp
     restart: unless-stopped
+    extra_hosts:
+      - "domain.tld:127.0.0.1" # Optional helper to resolve host for RHP3 test.
 ```
