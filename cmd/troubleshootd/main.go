@@ -10,9 +10,9 @@ import (
 	"time"
 
 	eapi "go.sia.tech/explored/api"
-	"go.sia.tech/host-troubleshoot/api"
-	"go.sia.tech/host-troubleshoot/build"
-	"go.sia.tech/host-troubleshoot/troubleshoot"
+	"go.sia.tech/troubleshootd/api"
+	"go.sia.tech/troubleshootd/build"
+	"go.sia.tech/troubleshootd/troubleshoot"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

@@ -9,8 +9,8 @@ import (
 
 	proto2 "go.sia.tech/core/rhp/v2"
 	proto3 "go.sia.tech/core/rhp/v3"
-	rhp2 "go.sia.tech/host-troubleshoot/internal/rhp/v2"
-	rhp3 "go.sia.tech/host-troubleshoot/internal/rhp/v3"
+	rhp2 "go.sia.tech/troubleshootd/internal/rhp/v2"
+	rhp3 "go.sia.tech/troubleshootd/internal/rhp/v3"
 )
 
 const minContractDuration = 144 * 30 // 30 days

@@ -14,7 +14,7 @@ import (
 	"go.sia.tech/core/types"
 	"go.sia.tech/coreutils/chain"
 	"go.sia.tech/coreutils/threadgroup"
-	"go.sia.tech/host-troubleshoot/github"
+	"go.sia.tech/troubleshootd/github"
 	"go.uber.org/zap"
 )
 

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"runtime"
 
-	"go.sia.tech/host-troubleshoot/build"
-	"go.sia.tech/host-troubleshoot/troubleshoot"
 	"go.sia.tech/jape"
+	"go.sia.tech/troubleshootd/build"
+	"go.sia.tech/troubleshootd/troubleshoot"
 )
 
 // A Troubleshooter is an interface that defines the methods for testing a host.
