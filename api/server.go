@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"runtime"
+	"time"
 
 	"go.sia.tech/jape"
 	"go.sia.tech/troubleshootd/build"
@@ -36,7 +37,10 @@ func (s *server) handlePOSTTroubleshoot(jc jape.Context) {
 		return
 	}
 
-	resp, err := s.t.TestHost(jc.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(jc.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	resp, err := s.t.TestHost(ctx, req)
 	if err != nil {
 		jc.Error(err, http.StatusInternalServerError)
 		return
