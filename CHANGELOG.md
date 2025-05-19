@@ -1,3 +1,9 @@
+## 0.2.3 (2025-05-19)
+
+### Fixes
+
+- Added more user-friendly error detections
+
 ## 0.2.2 (2025-05-18)
 
 ### Fixes
