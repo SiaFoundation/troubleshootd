@@ -41,7 +41,7 @@ type (
 		Scanned  bool          `json:"scanned"`
 		ScanTime time.Duration `json:"scanTime"`
 
-		ResolvedAddresses []string `json:"resolvedAddress"`
+		ResolvedAddresses []string `json:"resolvedAddresses"`
 
 		Settings *proto2.HostSettings `json:"settings"`
 
