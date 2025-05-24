@@ -13,10 +13,14 @@ func TestSemver(t *testing.T) {
 		{"v1.2.4", "v1.2.3", 1},
 		{"v1.2.3-beta.1", "v1.2.3", -1}, // pre-release < release
 		{"v1.2.3", "v1.2.3-beta.1", 1},  // release > pre-release
+		{"v1.2.3", "v1.2.3-beta.n", 1},  // release > malformed pre-release
 		{"v1.2.3-beta.1", "v1.2.3-beta.2", -1},
 		{"v1.2.3-alpha.1", "v1.2.3-beta.1", -1},
 		{"v1.2.3-beta.1", "v1.2.3-alpha.1", 1},
 		{"v1.2.3-alpha.1", "v1.2.3-alpha.2", -1},
+		{"v1.2.3-alpha.1", "v1.2.3-rc1", 1},
+		{"v1.2.3-alpha.a", "v1.2.3-alpha.1", -1},
+		{"v1.2.3-beta.a", "v1.2.3-alpha.1", 1},
 	}
 
 	for _, test := range tests {
