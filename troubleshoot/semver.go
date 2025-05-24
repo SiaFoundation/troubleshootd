@@ -40,6 +40,8 @@ func (v SemVer) Cmp(b SemVer) int {
 		return 1 // v is a release version, b is a pre-release version
 	case v.suffix != "" && b.suffix == "":
 		return -1 // v is a pre-release version, b is a release version
+	case v.suffix != "" && b.suffix != "":
+		return cmpSuffix(v.suffix, b.suffix)
 	default:
 		return 0
 	}
@@ -59,7 +61,7 @@ func (v *SemVer) UnmarshalText(buf []byte) error {
 	version = version[1:] // Remove the leading 'v'
 	if suffixPos := strings.Index(version, "-"); suffixPos >= 0 {
 		// remove optional suffix
-		suffix = version[suffixPos+1:]
+		suffix = strings.ToLower(version[suffixPos+1:])
 		version = version[:suffixPos]
 	}
 
@@ -84,4 +86,62 @@ func (v *SemVer) UnmarshalText(buf []byte) error {
 	v.version = [3]byte{byte(major), byte(minor), byte(patch)}
 	v.suffix = suffix
 	return nil
+}
+
+func cmpSuffix(a, b string) int {
+	if a == b {
+		return 0
+	}
+
+	aParts := strings.Split(a, ".")
+	bParts := strings.Split(b, ".")
+
+	switch {
+	case len(aParts) != 2 && len(bParts) != 2:
+		// neither suffix is in the expected format, treat them as equal
+		return 0
+	case len(aParts) != 2:
+		// a suffix is not in the expected format, treat it as less than b
+		return -1
+	case len(bParts) != 2:
+		// b suffix is not in the expected format, treat it as greater than a
+		return 1
+	}
+
+	suffixWeights := map[string]int{
+		"alpha": 1,
+		"beta":  2,
+	}
+
+	splitSuffix := func(s string) (w, n int) {
+		parts := strings.Split(s, ".")
+		if len(parts) != 2 {
+			return 0, 0 // not a valid suffix
+		}
+		w, ok := suffixWeights[parts[0]]
+		if !ok {
+			return 0, 0 // unknown suffix, treat as less than known ones
+		}
+		n, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return w, 0 // if the number part is invalid, treat it as zero
+		}
+		return w, n
+	}
+
+	aw, an := splitSuffix(a)
+	bw, bn := splitSuffix(b)
+
+	switch {
+	case aw > bw:
+		return 1
+	case aw < bw:
+		return -1
+	case an < bn:
+		return -1
+	case an > bn:
+		return 1
+	default:
+		return 0
+	}
 }
