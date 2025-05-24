@@ -132,9 +132,9 @@ func testRHP2(ctx context.Context, currentVersion SemVer, host Host, res *RHP2Re
 
 	release, err := parseReleaseString(settings.Release)
 	if err != nil {
-		res.Warnings = append(res.Warnings, fmt.Sprintf("failed to parse release version: %v", err))
-	} else if release.Cmp(currentVersion) > 0 {
-		res.Warnings = append(res.Warnings, fmt.Sprintf("host is running an outdated version: %s", release))
+		res.Warnings = append(res.Warnings, fmt.Sprintf("host is running an unknown version %q, which may not be stable", settings.Release))
+	} else if release.Cmp(currentVersion) < 0 {
+		res.Warnings = append(res.Warnings, fmt.Sprintf("host is running an outdated version %q, latest is %q", release, currentVersion))
 	}
 }
 
