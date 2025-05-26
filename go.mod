@@ -4,9 +4,9 @@ go 1.24.2
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
-	go.sia.tech/core v0.12.3
-	go.sia.tech/coreutils v0.13.6
-	go.sia.tech/explored v0.0.0-20250516211300-01759dcf72c3
+	go.sia.tech/core v0.12.5
+	go.sia.tech/coreutils v0.14.0
+	go.sia.tech/explored v1.0.0-beta.1
 	go.sia.tech/jape v0.14.0
 	go.uber.org/zap v1.27.0
 )
@@ -22,6 +22,7 @@ require (
 	github.com/quic-go/qpack v0.5.1 // indirect
 	github.com/quic-go/quic-go v0.51.0 // indirect
 	github.com/quic-go/webtransport-go v0.8.1-0.20241018022711-4ac2c9250e66 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	go.sia.tech/mux v1.4.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
