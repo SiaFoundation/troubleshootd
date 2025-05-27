@@ -62,6 +62,11 @@ func main() {
 
 	exploredClient := eapi.NewClient(exploredAPIAddress, exploredAPIPassword)
 
+	tip, err := exploredClient.ConsensusTip()
+	if err != nil {
+		log.Fatal("failed to get consensus tip from explored API", zap.Error(err))
+	}
+
 	t, err := troubleshoot.NewManager(exploredClient, log.Named("troubleshoot"))
 	if err != nil {
 		log.Fatal("failed to create troubleshoot manager", zap.Error(err))
@@ -85,7 +90,7 @@ func main() {
 		}
 	}()
 
-	log.Info("troubleshoot server started", zap.String("http", l.Addr().String()), zap.String("version", build.Version()))
+	log.Info("troubleshoot server started", zap.Stringer("tip", tip), zap.String("http", l.Addr().String()), zap.String("version", build.Version()), zap.String("explorer", exploredAPIAddress))
 	<-ctx.Done()
 	log.Info("shutting down server")
 }
