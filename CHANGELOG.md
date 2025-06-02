@@ -1,3 +1,14 @@
+## 0.2.3 (2025-06-02)
+
+### Features
+
+- Added support for comparing pre-release versions.
+
+### Fixes
+
+- Added more user-friendly error detections
+- Fixed issue with version comparison warning.
+
 ## 0.2.2 (2025-05-18)
 
 ### Fixes
