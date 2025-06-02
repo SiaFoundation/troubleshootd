@@ -4,8 +4,8 @@ go 1.24.2
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
-	go.sia.tech/core v0.13.0
-	go.sia.tech/coreutils v0.15.0
+	go.sia.tech/core v0.13.1
+	go.sia.tech/coreutils v0.15.2
 	go.sia.tech/explored v1.0.0-beta.1
 	go.sia.tech/jape v0.14.0
 	go.uber.org/zap v1.27.0
