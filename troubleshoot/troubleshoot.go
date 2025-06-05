@@ -140,7 +140,7 @@ func (m *Manager) TestHost(ctx context.Context, host Host) (Result, error) {
 		m.mu.Unlock()
 		return Result{}, fmt.Errorf("host is on cooldown, please try again in %s", n)
 	}
-	m.cooldown[host.PublicKey] = time.Now().Add(10 * time.Second)
+	m.cooldown[host.PublicKey] = time.Now().Add(15 * time.Second)
 	// grab the latest state
 	latestRelease := m.latestRelease
 	cs := m.state

@@ -31,7 +31,7 @@ func parseReleaseString(versionStr string) (SemVer, error) {
 
 func dialContext(ctx context.Context, network, address string) (net.Conn, error) {
 	conn, err := (&net.Dialer{
-		Timeout: 5 * time.Second,
+		Timeout: 2 * time.Minute,
 	}).DialContext(ctx, network, address)
 	if err != nil {
 		// return more user-friendly errors if possible

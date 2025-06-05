@@ -37,7 +37,7 @@ func (s *server) handlePOSTTroubleshoot(jc jape.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(jc.Request.Context(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(jc.Request.Context(), 45*time.Second)
 	defer cancel()
 
 	resp, err := s.t.TestHost(ctx, req)
