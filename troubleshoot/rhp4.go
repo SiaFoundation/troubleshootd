@@ -94,7 +94,7 @@ func testRHP4Quic(ctx context.Context, currentVersion SemVer, tip types.ChainInd
 	if err != nil {
 		if strings.Contains(err.Error(), "no recent network activity") {
 			_, port, _ := net.SplitHostPort(addr.Address)
-			res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to quic: check port forwarding and firewall settings for port %q", port))
+			res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to quic: check port forwarding and firewall settings for UDP port %q", port))
 		} else {
 			res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to quic: %s", err))
 		}
