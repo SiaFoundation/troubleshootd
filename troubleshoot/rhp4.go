@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	"go.sia.tech/core/types"
@@ -91,7 +92,12 @@ func testRHP4Quic(ctx context.Context, currentVersion SemVer, tip types.ChainInd
 	start := time.Now()
 	t, err := quic.Dial(ctx, addr.Address, hostKey)
 	if err != nil {
-		res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to quic: %s", err))
+		if strings.Contains(err.Error(), "no recent network activity") {
+			_, port, _ := net.SplitHostPort(addr.Address)
+			res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to quic: check port forwarding and firewall settings for port %q", port))
+		} else {
+			res.Errors = append(res.Errors, fmt.Sprintf("failed to connect to quic: %s", err))
+		}
 		return
 	}
 	defer t.Close()
