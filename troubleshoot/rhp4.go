@@ -123,7 +123,11 @@ func testRHP4(ctx context.Context, currentVersion SemVer, tip types.ChainIndex, 
 
 	ips, err := net.LookupIP(addr)
 	if err != nil {
-		res.Errors = append(res.Errors, fmt.Sprintf("failed to resolve host %q: %v", addr, err))
+		if strings.Contains(err.Error(), "no such host") {
+			res.Errors = append(res.Errors, fmt.Sprintf("DNS lookup %q failed", addr))
+		} else {
+			res.Errors = append(res.Errors, fmt.Sprintf("failed to resolve host %q: %v", addr, err))
+		}
 		return
 	}
 	for _, ip := range ips {
