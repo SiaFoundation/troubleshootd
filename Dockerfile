@@ -24,8 +24,9 @@ LABEL maintainer="The Sia Foundation <info@sia.tech>" \
     org.opencontainers.image.licenses=MIT
 
 # Install ca-certificates
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends ca-certificates
 
 # copy binary and prepare data dir.
 COPY --from=builder /troubleshootd/bin/* /usr/bin/
