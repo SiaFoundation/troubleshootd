@@ -4,8 +4,8 @@ go 1.24.2
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
-	go.sia.tech/core v0.13.1
-	go.sia.tech/coreutils v0.16.1-0.20250608145520-9012196fd524
+	go.sia.tech/core v0.13.2
+	go.sia.tech/coreutils v0.16.1
 	go.sia.tech/explored v1.0.0-beta.1
 	go.sia.tech/jape v0.14.0
 	go.uber.org/zap v1.27.0
@@ -26,13 +26,13 @@ require (
 	go.sia.tech/mux v1.4.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	lukechampine.com/frand v1.5.1 // indirect
 )
