@@ -1,3 +1,9 @@
+## 0.2.4 (2025-06-17)
+
+### Features
+
+- Changed height check to have additional leeway.
+
 ## 0.2.3 (2025-06-08)
 
 ### Features
