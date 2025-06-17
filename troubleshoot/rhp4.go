@@ -12,7 +12,15 @@ import (
 	rhp4 "go.sia.tech/coreutils/rhp/v4"
 	"go.sia.tech/coreutils/rhp/v4/quic"
 	"go.sia.tech/coreutils/rhp/v4/siamux"
+	"golang.org/x/exp/constraints"
 )
+
+func delta[T constraints.Integer | constraints.Float](a, b T) T {
+	if a < b {
+		return b - a
+	}
+	return a - b
+}
 
 func testRHP4Transport(ctx context.Context, t rhp4.TransportClient, currentVersion SemVer, tip types.ChainIndex, res *RHP4Result) {
 	ctx, cancel := context.WithCancel(ctx)
@@ -46,7 +54,7 @@ func testRHP4Transport(ctx context.Context, t rhp4.TransportClient, currentVersi
 		res.Warnings = append(res.Warnings, "host's collateral price is less than double the storage price")
 	}
 
-	if settings.Prices.TipHeight < tip.Height {
+	if delta(settings.Prices.TipHeight, tip.Height) >= 3 {
 		res.Warnings = append(res.Warnings, fmt.Sprintf("host's tip height %d is less than the current tip height %d", settings.Prices.TipHeight, tip.Height))
 	}
 
