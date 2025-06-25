@@ -1,4 +1,4 @@
-module go.sia.tech/troubleshootd // v0.2.4
+module go.sia.tech/troubleshootd // v0.2.5
 
 go 1.24.2
 

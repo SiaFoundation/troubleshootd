@@ -1,3 +1,9 @@
+## 0.2.5 (2025-06-25)
+
+### Fixes
+
+- Fixed an issue with LookupIP when using an IP already.
+
 ## 0.2.4 (2025-06-25)
 
 ### Features
