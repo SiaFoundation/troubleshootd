@@ -1,3 +1,11 @@
+## 0.2.4 (2025-06-25)
+
+### Features
+
+- Changed height check to have additional leeway.
+- Remove RHP2 support.
+- Use custom DNS resolver to avoid system caching.
+
 ## 0.2.3 (2025-06-08)
 
 ### Features
