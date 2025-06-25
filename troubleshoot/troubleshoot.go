@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"go.sia.tech/core/consensus"
-	proto2 "go.sia.tech/core/rhp/v2"
-	proto3 "go.sia.tech/core/rhp/v3"
 	proto4 "go.sia.tech/core/rhp/v4"
 	"go.sia.tech/core/types"
 	"go.sia.tech/coreutils/chain"
@@ -24,46 +22,6 @@ type (
 	Host struct {
 		PublicKey        types.PublicKey    `json:"publicKey"`
 		RHP4NetAddresses []chain.NetAddress `json:"rhp4NetAddresses"`
-	}
-
-	// RHP2Result is the result of testing a host's RHP2 endpoint. It contains
-	// the results of the connection, handshake, and scan, as well as any errors
-	// or warnings that occurred during the test.
-	RHP2Result struct {
-		Connected bool          `json:"connected"`
-		DialTime  time.Duration `json:"dialTime"`
-
-		Handshake     bool          `json:"handshake"`
-		HandshakeTime time.Duration `json:"handshakeTime"`
-
-		Scanned  bool          `json:"scanned"`
-		ScanTime time.Duration `json:"scanTime"`
-
-		ResolvedAddresses []string `json:"resolvedAddresses"`
-
-		Settings *proto2.HostSettings `json:"settings"`
-
-		Errors   []string `json:"errors"`
-		Warnings []string `json:"warnings"`
-	}
-
-	// RHP3Result is the result of testing a host's RHP3 endpoint. It contains
-	// the results of the connection, handshake, and scan, as well as any errors
-	// or warnings that occurred during the test.
-	RHP3Result struct {
-		Connected bool          `json:"connected"`
-		DialTime  time.Duration `json:"dialTime"`
-
-		Handshake     bool          `json:"handshake"`
-		HandshakeTime time.Duration `json:"handshakeTime"`
-
-		Scanned  bool          `json:"scanned"`
-		ScanTime time.Duration `json:"scanTime"`
-
-		PriceTable *proto3.HostPriceTable `json:"priceTable"`
-
-		Errors   []string `json:"errors"`
-		Warnings []string `json:"warnings"`
 	}
 
 	// RHP4Result is the result of testing a host's RHP4 endpoint. It contains
@@ -93,11 +51,6 @@ type (
 	Result struct {
 		PublicKey types.PublicKey `json:"publicKey"`
 		Version   string          `json:"version"`
-
-		// RHP2 and RHP3 are pointers so they are automatically deprecated
-		// after the v2 hardfork activates.
-		RHP2 *RHP2Result `json:"rhp2,omitempty"`
-		RHP3 *RHP3Result `json:"rhp3,omitempty"`
 
 		RHP4 []RHP4Result `json:"rhp4"`
 	}
@@ -193,8 +146,6 @@ func (m *Manager) TestHost(ctx context.Context, host Host) (Result, error) {
 				break
 			}
 		}
-	} else if resp.RHP2 != nil && resp.RHP2.Settings != nil {
-		resp.Version = resp.RHP2.Settings.Release
 	}
 	log.Info("host tested", zap.String("version", resp.Version), zap.Duration("elapsed", time.Since(start)))
 	return resp, nil
