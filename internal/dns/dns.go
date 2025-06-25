@@ -74,7 +74,11 @@ func QueryAAAA(ctx context.Context, server string, hostname string) ([]string, e
 	return resp, nil
 }
 
-func LookupIP(ctx context.Context, server, hostname string) ([]net.IP, error) {
+func resolve(ctx context.Context, server, hostname string, depth int, maxDepth int) ([]net.IP, error) {
+	if depth > maxDepth {
+		return nil, fmt.Errorf("maximum CNAME resolution depth reached: %d", maxDepth)
+	}
+
 	a, err := queryRecord(ctx, server, hostname, dns.TypeA)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query A records: %w", err)
@@ -100,8 +104,21 @@ func LookupIP(ctx context.Context, server, hostname string) ([]net.IP, error) {
 		}
 		records = append(records, ip)
 	}
-	if len(records) == 0 {
-		return nil, ErrNotFound
+
+	cname, err := queryRecord(ctx, server, hostname, dns.TypeCNAME)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query CNAME records: %w", err)
+	}
+	for _, r := range cname {
+		ips, err := resolve(ctx, server, r, depth+1, maxDepth)
+		if err != nil {
+			return nil, fmt.Errorf("failed to resolve CNAME %q: %w", r, err)
+		}
+		records = append(records, ips...)
 	}
 	return records, nil
+}
+
+func LookupIP(ctx context.Context, server, hostname string) ([]net.IP, error) {
+	return resolve(ctx, server, hostname, 0, 3)
 }
