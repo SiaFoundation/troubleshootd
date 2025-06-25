@@ -12,7 +12,7 @@ func TestLookupIP(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		_, err := LookupIP(ctx, "1.1.1.1:53", "foo.bar")
+		_, err := LookupIP(ctx, "1.1.1.1:53", "unknown.sia.host")
 		if !errors.Is(err, ErrNotFound) {
 			t.Fatalf("expected %q, got %q", ErrNotFound, err)
 		}

@@ -40,41 +40,6 @@ func queryRecord(ctx context.Context, server string, hostname string, recordType
 	return results, nil
 }
 
-// QueryCNAME queries the DNS server for CNAME records of the given hostname.
-// This function uses miekg/dns library to perform the query to bypass system
-// cache and directly query the DNS server specified by the `server` parameter.
-func QueryCNAME(ctx context.Context, server string, hostname string) ([]string, error) {
-	resp, err := queryRecord(ctx, server, hostname, dns.TypeCNAME)
-	if err != nil {
-		return nil, err
-	} else if len(resp) == 0 {
-		return nil, ErrNotFound
-	}
-	return resp, nil
-}
-
-// QueryA queries the DNS server for A records of the given hostname.
-func QueryA(ctx context.Context, server string, hostname string) ([]string, error) {
-	resp, err := queryRecord(ctx, server, hostname, dns.TypeA)
-	if err != nil {
-		return nil, err
-	} else if len(resp) == 0 {
-		return nil, ErrNotFound
-	}
-	return resp, nil
-}
-
-// QueryAAAA queries the DNS server for AAAA records of the given hostname.
-func QueryAAAA(ctx context.Context, server string, hostname string) ([]string, error) {
-	resp, err := queryRecord(ctx, server, hostname, dns.TypeAAAA)
-	if err != nil {
-		return nil, err
-	} else if len(resp) == 0 {
-		return nil, ErrNotFound
-	}
-	return resp, nil
-}
-
 func resolve(ctx context.Context, server, hostname string, depth int, maxDepth int) ([]net.IP, error) {
 	if depth > maxDepth {
 		return nil, fmt.Errorf("maximum CNAME resolution depth reached: %d", maxDepth)
@@ -120,7 +85,48 @@ func resolve(ctx context.Context, server, hostname string, depth int, maxDepth i
 	return records, nil
 }
 
+// QueryCNAME queries the DNS server for CNAME records of the given hostname.
+// This function uses miekg/dns library to perform the query to bypass system
+// cache and directly query the DNS server specified by the `server` parameter.
+func QueryCNAME(ctx context.Context, server string, hostname string) ([]string, error) {
+	resp, err := queryRecord(ctx, server, hostname, dns.TypeCNAME)
+	if err != nil {
+		return nil, err
+	} else if len(resp) == 0 {
+		return nil, ErrNotFound
+	}
+	return resp, nil
+}
+
+// QueryA queries the DNS server for A records of the given hostname.
+func QueryA(ctx context.Context, server string, hostname string) ([]string, error) {
+	resp, err := queryRecord(ctx, server, hostname, dns.TypeA)
+	if err != nil {
+		return nil, err
+	} else if len(resp) == 0 {
+		return nil, ErrNotFound
+	}
+	return resp, nil
+}
+
+// QueryAAAA queries the DNS server for AAAA records of the given hostname.
+func QueryAAAA(ctx context.Context, server string, hostname string) ([]string, error) {
+	resp, err := queryRecord(ctx, server, hostname, dns.TypeAAAA)
+	if err != nil {
+		return nil, err
+	} else if len(resp) == 0 {
+		return nil, ErrNotFound
+	}
+	return resp, nil
+}
+
 // LookupIP resolves the given hostname to its IP addresses using the specified DNS server.
 func LookupIP(ctx context.Context, server, hostname string) ([]net.IP, error) {
-	return resolve(ctx, server, hostname, 0, 3)
+	records, err := resolve(ctx, server, hostname, 0, 3)
+	if err != nil {
+		return nil, err
+	} else if len(records) == 0 {
+		return nil, ErrNotFound
+	}
+	return records, nil
 }
