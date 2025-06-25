@@ -122,6 +122,10 @@ func QueryAAAA(ctx context.Context, server string, hostname string) ([]string, e
 
 // LookupIP resolves the given hostname to its IP addresses using the specified DNS server.
 func LookupIP(ctx context.Context, server, hostname string) ([]net.IP, error) {
+	if ip := net.ParseIP(hostname); ip != nil {
+		// If the hostname is already an IP address, return it directly.
+		return []net.IP{ip}, nil
+	}
 	records, err := resolve(ctx, server, hostname, 0, 3)
 	if err != nil {
 		return nil, err
