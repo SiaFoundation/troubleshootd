@@ -10,6 +10,7 @@ import (
 	"github.com/miekg/dns"
 )
 
+// ErrNotFound is returned when a DNS query does not return any records.
 var ErrNotFound = errors.New("no such host")
 
 func queryRecord(ctx context.Context, server string, hostname string, recordType uint16) ([]string, error) {
@@ -119,6 +120,7 @@ func resolve(ctx context.Context, server, hostname string, depth int, maxDepth i
 	return records, nil
 }
 
+// LookupIP resolves the given hostname to its IP addresses using the specified DNS server.
 func LookupIP(ctx context.Context, server, hostname string) ([]net.IP, error) {
 	return resolve(ctx, server, hostname, 0, 3)
 }
