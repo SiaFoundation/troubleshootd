@@ -2,9 +2,12 @@ package troubleshoot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
+	"os"
 	"strings"
+	"syscall"
 	"time"
 
 	"go.sia.tech/core/types"
@@ -12,14 +15,58 @@ import (
 	rhp4 "go.sia.tech/coreutils/rhp/v4"
 	"go.sia.tech/coreutils/rhp/v4/quic"
 	"go.sia.tech/coreutils/rhp/v4/siamux"
+	"go.sia.tech/troubleshootd/internal/dns"
 	"golang.org/x/exp/constraints"
 )
+
+const minContractDuration = 144 * 30 // 30 days
 
 func delta[T constraints.Integer | constraints.Float](a, b T) T {
 	if a < b {
 		return b - a
 	}
 	return a - b
+}
+
+func parseReleaseString(versionStr string) (SemVer, error) {
+	var version SemVer
+	if parts := strings.Fields(versionStr); len(parts) > 1 {
+		versionStr = parts[1] // remove the app prefix
+	}
+	if err := version.UnmarshalText([]byte(versionStr)); err != nil {
+		return SemVer{}, err
+	}
+	return version, nil
+}
+
+func dialContext(ctx context.Context, network, address string) (net.Conn, error) {
+	conn, err := (&net.Dialer{
+		Timeout: 2 * time.Minute,
+	}).DialContext(ctx, network, address)
+	if err != nil {
+		// return more user-friendly errors if possible
+		var dnsErr *net.DNSError
+		if errors.As(err, &dnsErr) {
+			return nil, fmt.Errorf("failed to resolve host %q: check DNS setup", address)
+		}
+
+		var opErr *net.OpError
+		if errors.As(err, &opErr) {
+			if syscallErr, ok := opErr.Err.(*os.SyscallError); ok {
+				if syscallErr.Err == syscall.ECONNREFUSED {
+					return nil, fmt.Errorf("connection refused at %q: check if the service is running and port is forwarded", address)
+				}
+			}
+		}
+
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			return nil, fmt.Errorf("timeout connecting to %q: check port forwarding or firewall", address)
+		}
+
+		return nil, fmt.Errorf("failed to connect to host at %q: %w", address, err)
+	}
+	return conn, nil
 }
 
 func testRHP4Transport(ctx context.Context, t rhp4.TransportClient, currentVersion SemVer, tip types.ChainIndex, res *RHP4Result) {
@@ -129,12 +176,12 @@ func testRHP4(ctx context.Context, currentVersion SemVer, tip types.ChainIndex, 
 		return
 	}
 
-	ips, err := net.LookupIP(addr)
+	ips, err := dns.LookupIP(ctx, "1.1.1.1:53", addr)
 	if err != nil {
-		if strings.Contains(err.Error(), "no such host") {
-			res.Errors = append(res.Errors, fmt.Sprintf("DNS lookup %q failed", addr))
+		if errors.Is(err, dns.ErrNotFound) {
+			res.Errors = append(res.Errors, fmt.Sprintf("DNS lookup %q failed: check DNS records or wait for propagation", addr))
 		} else {
-			res.Errors = append(res.Errors, fmt.Sprintf("failed to resolve host %q: %v", addr, err))
+			res.Errors = append(res.Errors, fmt.Sprintf("failed to resolve host %q: %s", addr, err))
 		}
 		return
 	}

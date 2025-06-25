@@ -3,7 +3,6 @@ package troubleshoot
 import (
 	"context"
 	"fmt"
-	"net"
 	"sync"
 	"time"
 
@@ -24,7 +23,6 @@ type (
 	// RHP4.
 	Host struct {
 		PublicKey        types.PublicKey    `json:"publicKey"`
-		RHP2NetAddress   string             `json:"rhp2NetAddress"`
 		RHP4NetAddresses []chain.NetAddress `json:"rhp4NetAddresses"`
 	}
 
@@ -154,32 +152,6 @@ func (m *Manager) TestHost(ctx context.Context, host Host) (Result, error) {
 		PublicKey: host.PublicKey,
 	}
 	var wg sync.WaitGroup
-	if cs.Index.Height < cs.Network.HardforkV2.AllowHeight {
-		resp.RHP2 = new(RHP2Result)
-		resp.RHP3 = new(RHP3Result)
-
-		// do not test RHP2 or 3 after the V2 hardfork
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			log.Debug("starting RHP2 test", zap.String("addr", host.RHP2NetAddress))
-			start := time.Now()
-			testRHP2(ctx, latestRelease, host, resp.RHP2)
-			log.Debug("finished RHP2 test", zap.String("addr", host.RHP2NetAddress), zap.Bool("successful", resp.RHP2.Scanned), zap.Duration("elapsed", time.Since(start)))
-			if resp.RHP2.Settings != nil {
-				addr, _, err := net.SplitHostPort(resp.RHP2.Settings.NetAddress)
-				if err != nil {
-					resp.RHP3.Errors = append(resp.RHP3.Errors, fmt.Sprintf("failed to parse net address %q: %v", resp.RHP2.Settings.NetAddress, err))
-					return
-				}
-				rhp3Addr := net.JoinHostPort(addr, resp.RHP2.Settings.SiaMuxPort)
-				log.Debug("starting RHP3 test", zap.String("addr", rhp3Addr))
-				start = time.Now()
-				testRHP3(ctx, rhp3Addr, cs.Index.Height, host, resp.RHP3)
-				log.Debug("finished RHP3 test", zap.String("addr", rhp3Addr), zap.Bool("successful", resp.RHP3.Scanned), zap.Duration("elapsed", time.Since(start)))
-			}
-		}()
-	}
 
 	resp.RHP4 = make([]RHP4Result, len(host.RHP4NetAddresses))
 	rhp4Protos := make(map[chain.Protocol]bool)
