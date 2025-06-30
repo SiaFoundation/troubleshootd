@@ -165,6 +165,21 @@ func testRHP4Quic(ctx context.Context, currentVersion SemVer, tip types.ChainInd
 	testRHP4Transport(ctx, t, currentVersion, tip, res)
 }
 
+func lookupIPs(ctx context.Context, addr string) ([]net.IP, error) {
+	// try system resolver first
+	ips, err := net.LookupIP(addr)
+	if err == nil {
+		return ips, nil
+	}
+
+	// fallback to DNS resolver
+	ips, err = dns.LookupIP(ctx, "1.1.1.1:53", addr)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve host %q: %w", addr, err)
+	}
+	return ips, nil
+}
+
 func testRHP4(ctx context.Context, currentVersion SemVer, tip types.ChainIndex, hostKey types.PublicKey, netAddr chain.NetAddress, res *RHP4Result) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -176,7 +191,7 @@ func testRHP4(ctx context.Context, currentVersion SemVer, tip types.ChainIndex, 
 		return
 	}
 
-	ips, err := dns.LookupIP(ctx, "1.1.1.1:53", addr)
+	ips, err := lookupIPs(ctx, addr)
 	if err != nil {
 		if errors.Is(err, dns.ErrNotFound) {
 			res.Errors = append(res.Errors, fmt.Sprintf("DNS lookup %q failed: check DNS records or wait for propagation", addr))
