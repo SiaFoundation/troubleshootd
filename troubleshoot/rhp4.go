@@ -86,7 +86,7 @@ func testRHP4Transport(ctx context.Context, t rhp4.TransportClient, currentVersi
 	}
 
 	if settings.MaxCollateral.IsZero() {
-		res.Warnings = append(res.Warnings, "host has no max collateral")
+		res.Errors = append(res.Errors, "host has no max collateral")
 	}
 
 	if settings.MaxContractDuration < minContractDuration {
@@ -94,9 +94,9 @@ func testRHP4Transport(ctx context.Context, t rhp4.TransportClient, currentVersi
 	}
 
 	if settings.Prices.Collateral.IsZero() {
-		res.Warnings = append(res.Warnings, "host has no collateral price")
+		res.Errors = append(res.Errors, "host has no collateral price")
 	} else if settings.Prices.Collateral.Cmp(settings.Prices.StoragePrice) < 0 {
-		res.Warnings = append(res.Warnings, "host's collateral price is less than storage price")
+		res.Errors = append(res.Errors, "host's collateral price is less than storage price")
 	} else if settings.Prices.StoragePrice.Mul64(2).Cmp(settings.Prices.Collateral) > 0 {
 		res.Warnings = append(res.Warnings, "host's collateral price is less than double the storage price")
 	}
