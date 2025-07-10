@@ -102,7 +102,7 @@ func testRHP4Transport(ctx context.Context, t rhp4.TransportClient, currentVersi
 	}
 
 	if delta(settings.Prices.TipHeight, tip.Height) >= 3 {
-		res.Warnings = append(res.Warnings, fmt.Sprintf("host's tip height %d is less than the current tip height %d", settings.Prices.TipHeight, tip.Height))
+		res.Errors = append(res.Errors, fmt.Sprintf("host's tip height %d is less than the current tip height %d", settings.Prices.TipHeight, tip.Height))
 	}
 
 	release, err := parseReleaseString(settings.Release)
