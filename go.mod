@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/miekg/dns v1.1.68
-	go.sia.tech/core v0.17.5
+	go.sia.tech/core v0.18.0
 	go.sia.tech/coreutils v0.18.5
 	go.sia.tech/explored v1.0.0-beta.1
 	go.sia.tech/jape v0.14.1
