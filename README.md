@@ -1,6 +1,7 @@
 # troubleshootd
 
-Provides an API that can be used to troubleshoot issues with a host's connectivity. Tests RHP2, RHP3, and RHP4 SiaMux + QUIC.
+Provides an API that can be used to troubleshoot issues with a host's
+connectivity. Tests RHP2, RHP3, and RHP4 SiaMux + QUIC.
 
 ### Default Ports
 + `8080` - API
