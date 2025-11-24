@@ -1,3 +1,9 @@
+## 0.2.6 (2025-11-24)
+
+### Fixes
+
+- Update core dependency from 0.17.5 to 0.18.0.
+
 ## 0.2.5 (2025-06-25)
 
 ### Fixes
