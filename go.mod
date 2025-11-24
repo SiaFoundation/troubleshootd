@@ -9,7 +9,7 @@ require (
 	go.sia.tech/coreutils v0.18.7
 	go.sia.tech/explored v1.0.0-beta.1
 	go.sia.tech/jape v0.14.1
-	go.uber.org/zap v1.27.0
+	go.uber.org/zap v1.27.1
 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
 )
 
