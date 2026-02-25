@@ -1,6 +1,6 @@
 module go.sia.tech/troubleshootd // v0.2.6
 
-go 1.24.2
+go 1.26.0
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
