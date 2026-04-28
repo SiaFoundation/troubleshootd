@@ -1,3 +1,10 @@
+## 0.2.8 (2026-04-28)
+
+### Fixes
+
+- Update core to v0.20.0.
+- Update coreutils to v0.21.3.
+
 ## 0.2.7 (2026-04-16)
 
 ### Features
