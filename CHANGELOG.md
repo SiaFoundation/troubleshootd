@@ -1,3 +1,15 @@
+## 0.2.8 (2026-07-06)
+
+### Features
+
+- Update go.sia.tech/core from v0.21.1 to v0.21.4.
+- Update go.sia.tech/coreutils from v0.22.0 to 0.23.3.
+
+### Fixes
+
+- Update core to v0.20.0.
+- Update coreutils to v0.21.3.
+
 ## 0.2.7 (2026-04-16)
 
 ### Features
