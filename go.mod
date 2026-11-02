@@ -6,7 +6,7 @@ require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/miekg/dns v1.1.73
 	go.sia.tech/core v0.21.8
-	go.sia.tech/coreutils v0.25.1
+	go.sia.tech/coreutils v0.25.2
 	go.sia.tech/explored v1.0.0-beta.1
 	go.sia.tech/jape v0.14.4
 	go.uber.org/zap v1.28.0
